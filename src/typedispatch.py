@@ -1,7 +1,7 @@
 import functools
 import inspect
 
-__all__ = ('dispatch', 'inside',)
+__all__ = ('dispatch', 'inside','empty',)
 
 def dispatch(*dispatch_args, **dispatch_kwargs):
     def _decorator(method):
@@ -70,3 +70,6 @@ def inside(*args):
     def _predicate(arg):
         return arg in args
     return _predicate
+
+def empty(arg):
+    return not arg
