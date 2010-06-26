@@ -20,7 +20,13 @@ def dispatch(*dispatch_args, **dispatch_kwargs):
         else:
             dispatch_table = []
 
-        dispatch_table.append((dispatch_args, dispatch_kwargs, method))
+        idx = -1
+        # Logic for inserting before generic default.
+        for idx in range(len(dispatch_table) - 1, -1, -1):
+            if dispatch_table[idx][0] or dispatch_table[idx][1]:
+                break
+
+        dispatch_table.insert(idx + 1, (dispatch_args, dispatch_kwargs, method))
 
         @functools.wraps(method)
         def _wrapper(*args, **kwargs):
