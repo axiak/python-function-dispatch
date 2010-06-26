@@ -3,7 +3,7 @@ import inspect
 
 from itertools import izip_longest
 
-__all__ = ('dispatch', 'inside','anything',)
+__all__ = ('dispatch', 'inside','anything','iterable')
 
 def dispatch(*dispatch_args, **dispatch_kwargs):
     def _decorator(method):
@@ -32,7 +32,7 @@ def dispatch(*dispatch_args, **dispatch_kwargs):
 
 
 def _check_filter(filter_exp, arg):
-    print 'Check: %r <=> %r' % (filter_exp, arg)
+    #print 'Check: %r <=> %r' % (filter_exp, arg)
     if isinstance(filter_exp, type):
         if not isinstance(arg, filter_exp):
             return False
@@ -84,3 +84,6 @@ def inside(*args):
 
 def anything(*args):
     return True
+
+def iterable(arg):
+    return hasattr(arg, '__iter__')
