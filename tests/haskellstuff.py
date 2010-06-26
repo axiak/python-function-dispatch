@@ -11,7 +11,7 @@ import timeit
 def reverse(l):
     return []
 
-@dispatch()
+@dispatch(iterable)
 def reverse(l):
     x, xs = l[0], l[1:]
     return reverse(l[1:]) + l[:1]
