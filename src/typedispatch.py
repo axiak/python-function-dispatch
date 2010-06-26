@@ -1,7 +1,9 @@
 import functools
 import inspect
 
-__all__ = ('dispatch', 'inside','empty',)
+from itertools import izip_longest
+
+__all__ = ('dispatch', 'inside','anything',)
 
 def dispatch(*dispatch_args, **dispatch_kwargs):
     def _decorator(method):
@@ -30,15 +32,24 @@ def dispatch(*dispatch_args, **dispatch_kwargs):
 
 
 def _check_filter(filter_exp, arg):
+    print 'Check: %r <=> %r' % (filter_exp, arg)
     if isinstance(filter_exp, type):
         if not isinstance(arg, filter_exp):
             return False
     elif callable(filter_exp):
         if not filter_exp(arg):
             return False
-    else:
-        if filter_exp != arg:
+    elif hasattr(filter_exp, '__iter__'):
+        if not hasattr(arg, '__iter__'):
             return False
+        BAD = object()
+        for sub_filter_exp, sub_arg in izip_longest(filter_exp, arg, fillvalue=BAD):
+            if sub_filter_exp is BAD or sub_arg is BAD:
+                return False
+            if not _check_filter(sub_filter_exp, sub_arg):
+                return False
+    else:
+        return filter_exp == arg
     return True
 
 def _dispatcher(args, kwargs, dispatch_table):
@@ -62,7 +73,7 @@ def _dispatcher(args, kwargs, dispatch_table):
         if failed:
             continue
         return func(*args, **kwargs)
-    raise ValueError("Dispatched value not found: %r <=> %r" % (args, dispatch_table))
+    raise NameError("named function %r with arguments is not defined" % func.__name__)
 
 # helper functions
 
@@ -71,5 +82,5 @@ def inside(*args):
         return arg in args
     return _predicate
 
-def empty(arg):
-    return not arg
+def anything(*args):
+    return True
