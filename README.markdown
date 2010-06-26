@@ -28,7 +28,6 @@ Here's the cooresponding solution using this dispatch system:
 
     @dispatch(iterable)
     def reverse(l):
-        x, xs = l[0], l[1:]
         return reverse(l[1:]) + l[:1]
 
 So yeah, this is pretty cool syntactic sugar. What happens if we
